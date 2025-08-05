@@ -59,7 +59,7 @@ describe('PdfProcessor', () => {
       mapping: [
         { pdfFieldName: 'firstName', valueSource: 'static', staticValue: 'John Doe' },
         { pdfFieldName: 'email', valueSource: 'expression', expression: '{{$json.email}}' },
-        { pdfFieldName: 'subscribe', valueSource: 'static', staticValue: 'true' },
+        { pdfFieldName: 'subscribe', valueSource: 'static', staticValue: true },
       ],
     },
     outputFormat: 'binary',

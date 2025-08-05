@@ -197,7 +197,7 @@ describe('FieldMapper', () => {
 
       it('should convert number values to string', async () => {
         const fieldMappings: IFieldMapping[] = [
-          { pdfFieldName: 'firstName', valueSource: 'static', staticValue: '123' },
+          { pdfFieldName: 'firstName', valueSource: 'static', staticValue: 123 },
         ];
 
         const result = await fieldMapper.mapFieldsToValues(fieldMappings, mockPdfFields);
@@ -206,7 +206,7 @@ describe('FieldMapper', () => {
 
       it('should convert boolean values to string', async () => {
         const fieldMappings: IFieldMapping[] = [
-          { pdfFieldName: 'firstName', valueSource: 'static', staticValue: 'true' },
+          { pdfFieldName: 'firstName', valueSource: 'static', staticValue: true },
         ];
 
         const result = await fieldMapper.mapFieldsToValues(fieldMappings, mockPdfFields);
@@ -215,7 +215,7 @@ describe('FieldMapper', () => {
 
       it('should handle null/undefined values', async () => {
         const fieldMappings: IFieldMapping[] = [
-          { pdfFieldName: 'email', valueSource: 'static', staticValue: '' },
+          { pdfFieldName: 'email', valueSource: 'static', staticValue: undefined },
         ];
 
         const result = await fieldMapper.mapFieldsToValues(fieldMappings, mockPdfFields);
@@ -236,7 +236,7 @@ describe('FieldMapper', () => {
     describe('checkbox fields', () => {
       it('should convert boolean true to "Yes"', async () => {
         const fieldMappings: IFieldMapping[] = [
-          { pdfFieldName: 'subscribe', valueSource: 'static', staticValue: 'true' },
+          { pdfFieldName: 'subscribe', valueSource: 'static', staticValue: true },
         ];
 
         const result = await fieldMapper.mapFieldsToValues(fieldMappings, mockPdfFields);
@@ -245,7 +245,7 @@ describe('FieldMapper', () => {
 
       it('should convert boolean false to "Off"', async () => {
         const fieldMappings: IFieldMapping[] = [
-          { pdfFieldName: 'subscribe', valueSource: 'static', staticValue: 'false' },
+          { pdfFieldName: 'subscribe', valueSource: 'static', staticValue: false },
         ];
 
         const result = await fieldMapper.mapFieldsToValues(fieldMappings, mockPdfFields);
@@ -280,10 +280,10 @@ describe('FieldMapper', () => {
 
       it('should convert numbers correctly', async () => {
         const fieldMappings1: IFieldMapping[] = [
-          { pdfFieldName: 'subscribe', valueSource: 'static', staticValue: '1' },
+          { pdfFieldName: 'subscribe', valueSource: 'static', staticValue: 1 },
         ];
         const fieldMappings2: IFieldMapping[] = [
-          { pdfFieldName: 'subscribe', valueSource: 'static', staticValue: '0' },
+          { pdfFieldName: 'subscribe', valueSource: 'static', staticValue: 0 },
         ];
 
         const result1 = await fieldMapper.mapFieldsToValues(fieldMappings1, mockPdfFields);
@@ -379,7 +379,7 @@ describe('FieldMapper', () => {
 
     it('should detect missing static values', async () => {
       const fieldMappings: IFieldMapping[] = [
-        { pdfFieldName: 'firstName', valueSource: 'static', staticValue: '' },
+        { pdfFieldName: 'firstName', valueSource: 'static', staticValue: undefined },
       ];
 
       const result = await fieldMapper.validateMappings(fieldMappings, mockPdfFields);

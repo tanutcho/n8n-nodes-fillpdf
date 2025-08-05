@@ -5,7 +5,6 @@ import {
 	INodeType,
 	INodeTypeDescription,
 	INodePropertyOptions,
-	NodeConnectionType,
 	NodeOperationError,
 } from 'n8n-workflow';
 
@@ -30,8 +29,8 @@ export class FillPdf implements INodeType {
 		requestDefaults: {
 			baseURL: '',
 		},
-		inputs: [NodeConnectionType.Main],
-		outputs: [NodeConnectionType.Main],
+		inputs: ['main'],
+		outputs: ['main'],
 		properties: [
 			{
 				displayName: 'PDF Source',

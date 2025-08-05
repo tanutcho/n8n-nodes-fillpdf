@@ -405,6 +405,7 @@ describe('FieldInspector', () => {
       };
       
       mockContext.getInputData.mockReturnValue([{
+        json: {},
         binary: { data: binaryData },
       }]);
 
@@ -428,6 +429,7 @@ describe('FieldInspector', () => {
       };
       
       mockContext.getInputData.mockReturnValue([{
+        json: {},
         binary: { data: binaryData },
       }]);
 
@@ -586,7 +588,7 @@ describe('FieldInspector', () => {
         'https://domain.com/path/to/file.pdf?param=value',
       ];
 
-      const invalidUrls = [
+      const _invalidUrls = [
         'not-a-url',
         'ftp://example.com/file.pdf',
         'https://example.com/file.txt',

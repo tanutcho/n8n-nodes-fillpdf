@@ -24,7 +24,7 @@ export interface IFillPdfNodeParams {
 export interface IFieldMapping {
 	pdfFieldName: string;
 	valueSource: 'static' | 'expression';
-	staticValue?: string | boolean;
+	staticValue?: string | number | boolean;
 	expression?: string;
 }
 
