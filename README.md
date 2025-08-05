@@ -975,6 +975,12 @@ npm run validate-setup
 
 # Validate publication readiness
 npm run validate-publication
+
+# Security audit
+npm run audit
+
+# Fix security vulnerabilities
+npm run audit:fix
 ```
 
 ### Release

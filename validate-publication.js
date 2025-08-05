@@ -399,6 +399,84 @@ class PublicationValidator {
         };
     }
 
+    async validateSecurity() {
+        const { spawn } = require('child_process');
+        
+        return new Promise((resolve) => {
+            const audit = spawn('npm', ['audit', '--json'], { 
+                stdio: ['pipe', 'pipe', 'pipe'],
+                shell: true 
+            });
+            
+            let stdout = '';
+            let stderr = '';
+            
+            audit.stdout.on('data', (data) => {
+                stdout += data.toString();
+            });
+            
+            audit.stderr.on('data', (data) => {
+                stderr += data.toString();
+            });
+            
+            audit.on('close', (code) => {
+                try {
+                    if (code === 0) {
+                        resolve({
+                            success: true,
+                            message: 'No security vulnerabilities found'
+                        });
+                    } else {
+                        const auditResult = JSON.parse(stdout);
+                        const vulnerabilities = auditResult.metadata?.vulnerabilities;
+                        
+                        if (vulnerabilities) {
+                            const total = vulnerabilities.total || 0;
+                            const critical = vulnerabilities.critical || 0;
+                            const high = vulnerabilities.high || 0;
+                            
+                            if (critical > 0 || high > 0) {
+                                resolve({
+                                    success: false,
+                                    message: `Security vulnerabilities found: ${critical} critical, ${high} high. Run 'npm audit fix' to resolve.`
+                                });
+                            } else if (total > 0) {
+                                resolve({
+                                    warning: true,
+                                    message: `${total} low/moderate security vulnerabilities found. Consider running 'npm audit fix'.`
+                                });
+                            } else {
+                                resolve({
+                                    success: true,
+                                    message: 'No significant security vulnerabilities found'
+                                });
+                            }
+                        } else {
+                            resolve({
+                                success: true,
+                                message: 'Security audit completed successfully'
+                            });
+                        }
+                    }
+                } catch (error) {
+                    resolve({
+                        warning: true,
+                        message: 'Could not parse security audit results'
+                    });
+                }
+            });
+            
+            // Timeout after 30 seconds
+            setTimeout(() => {
+                audit.kill();
+                resolve({
+                    warning: true,
+                    message: 'Security audit timed out'
+                });
+            }, 30000);
+        });
+    }
+
     async run() {
         this.log('n8n-nodes-fillpdf Publication Validator', 'info');
         this.log('==========================================\n', 'info');
@@ -414,6 +492,7 @@ class PublicationValidator {
         await this.test('Package Scripts', () => this.validateScripts());
         await this.test('Linting Setup', () => this.validateLintingSetup());
         await this.test('Dependencies', () => this.validateDependencies());
+        await this.test('Security Audit', () => this.validateSecurity());
         
         // Print summary
         this.log('\n==========================================', 'info');

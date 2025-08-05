@@ -54,6 +54,8 @@
     "test:ci": "jest --ci --coverage --watchAll=false",
     "validate-setup": "node setup-validator.js",
     "validate-publication": "node validate-publication.js",
+    "audit": "npm audit",
+    "audit:fix": "npm audit fix",
     "prepack": "npm run build:clean && npm run lint && npm run test:ci && npm run validate-publication",
     "prepublishOnly": "npm run prepack",
     "release": "npm run prepack && npm publish",
@@ -89,7 +91,7 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-n8n-nodes-base": "^1.11.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "gulp": "^4.0.2",
+    "gulp": "^5.0.0",
     "jest": "^29.5.0",
     "n8n-workflow": "^1.2.0",
     "prettier": "^2.8.8",
@@ -102,5 +104,8 @@
   },
   "dependencies": {
     "axios": "^1.11.0"
+  },
+  "overrides": {
+    "form-data": "^4.0.4"
   }
 }
