@@ -345,10 +345,10 @@ npm run dev          # Watch and rebuild
 npm run build        # Build production
 npm run clean        # Clean build files
 
-# Testing
-npm test             # Run all tests
-npm run test:watch   # Watch mode
-npm run test:coverage # Coverage report
+# Testing (currently being refactored)
+npm run build        # Verify TypeScript compilation
+npm run lint         # Verify code quality and n8n standards
+npm run audit        # Verify security
 
 # Quality
 npm run lint         # Check linting

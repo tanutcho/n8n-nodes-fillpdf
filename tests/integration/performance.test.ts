@@ -83,11 +83,11 @@ describe('FillPdf Performance Tests', () => {
       // Performance assertions
       expect(result[0][0].json.success).toBe(true);
       expect(endTime - startTime).toBeLessThan(10000); // Should complete within 10 seconds
-      expect(result[0][0].json.metadata.processingTime).toBeLessThan(5000);
+      expect((result[0][0].json.metadata as any).processingTime).toBeLessThan(5000);
     }, 15000); // Increase Jest timeout for this test
 
     it('should handle 50MB PDF files with memory efficiency', async () => {
-      const hugePdfSize = 50 * 1024 * 1024; // 50MB
+      const _hugePdfSize = 50 * 1024 * 1024; // 50MB
       
       mockContext.getNodeParameter.mockImplementation((paramName: string) => {
         switch (paramName) {
@@ -309,12 +309,13 @@ describe('FillPdf Performance Tests', () => {
       // Verify all items processed successfully
       result[0].forEach((item, index) => {
         expect(item.json.success).toBe(true);
-        expect(item.json.metadata.batch?.itemIndex).toBe(index + 1);
-        expect(item.json.metadata.batch?.totalItems).toBe(50);
+        const metadata = item.json.metadata as any;
+        expect(metadata.batch?.itemIndex).toBe(index + 1);
+        expect(metadata.batch?.totalItems).toBe(50);
       });
 
       // Verify batch summary
-      const batchSummary = result[0][0].json.metadata.batchSummary;
+      const batchSummary = (result[0][0].json.metadata as any).batchSummary;
       expect(batchSummary?.totalItems).toBe(50);
       expect(batchSummary?.successfulItems).toBe(50);
       expect(batchSummary?.failedItems).toBe(0);
@@ -451,7 +452,7 @@ describe('FillPdf Performance Tests', () => {
       const mockPythonBridge = require('../../nodes/FillPdf/python-bridge').PythonBridge;
       mockPythonBridge.prototype.executePythonScript = jest.fn().mockImplementation(async () => {
         // Create some temporary objects to test GC
-        const tempData = new Array(1000).fill(0).map((_, i) => ({ id: i, data: 'x'.repeat(1000) }));
+        const _tempData = new Array(1000).fill(0).map((_, i) => ({ id: i, data: 'x'.repeat(1000) }));
         await new Promise(resolve => setTimeout(resolve, 50));
         return {
           success: true,
@@ -529,7 +530,7 @@ describe('FillPdf Performance Tests', () => {
       expect(endTime - startTime).toBeLessThan(12000); // Should complete within 12 seconds
 
       // Verify batch processing handled the load correctly
-      const batchSummary = result[0][0].json.metadata.batchSummary;
+      const batchSummary = (result[0][0].json.metadata as any).batchSummary;
       expect(batchSummary?.successfulItems).toBe(15);
       expect(batchSummary?.failedItems).toBe(0);
     });

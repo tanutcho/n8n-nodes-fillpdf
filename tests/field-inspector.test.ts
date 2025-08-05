@@ -16,7 +16,7 @@ jest.mock('http');
 const MockPythonBridge = PythonBridge as jest.MockedClass<typeof PythonBridge>;
 const mockFs = fs as jest.Mocked<typeof fs>;
 const mockHttps = https as jest.Mocked<typeof https>;
-// const mockHttp = http as jest.Mocked<typeof http>;
+// const _mockHttp = http as jest.Mocked<typeof http>;
 
 describe('FieldInspector', () => {
   let fieldInspector: FieldInspector;
@@ -282,7 +282,7 @@ describe('FieldInspector', () => {
     });
 
     it('should download PDF from URL successfully', async () => {
-      mockHttps.get.mockImplementation((url, options, callback) => {
+      mockHttps.get.mockImplementation((_url, options, callback) => {
         if (typeof options === 'function') {
           callback = options;
         }
@@ -306,7 +306,7 @@ describe('FieldInspector', () => {
 
     it('should handle HTTP errors', async () => {
       mockResponse.statusCode = 404;
-      mockHttps.get.mockImplementation((url, options, callback) => {
+      mockHttps.get.mockImplementation((_url, options, callback) => {
         if (typeof options === 'function') {
           callback = options;
         }
@@ -325,7 +325,7 @@ describe('FieldInspector', () => {
 
     it('should handle non-PDF content type', async () => {
       mockResponse.headers = { 'content-type': 'text/html' };
-      mockHttps.get.mockImplementation((url, options, callback) => {
+      mockHttps.get.mockImplementation((_url, options, callback) => {
         if (typeof options === 'function') {
           callback = options;
         }
@@ -344,7 +344,7 @@ describe('FieldInspector', () => {
 
     it('should handle file too large', async () => {
       mockResponse.headers = { 'content-length': (60 * 1024 * 1024).toString() };
-      mockHttps.get.mockImplementation((url, options, callback) => {
+      mockHttps.get.mockImplementation((_url, options, callback) => {
         if (typeof options === 'function') {
           callback = options;
         }
@@ -362,9 +362,9 @@ describe('FieldInspector', () => {
     });
 
     it('should handle download timeout', async () => {
-      mockHttps.get.mockImplementation((url, options, callback) => {
+      mockHttps.get.mockImplementation((_url, _options, _callback) => {
         setTimeout(() => {
-          mockRequest.on.mock.calls.find(call => call[0] === 'timeout')[1]();
+          mockRequest.on.mock.calls.find((call: any) => call[0] === 'timeout')[1]();
         }, 10);
         return mockRequest;
       });
@@ -377,7 +377,7 @@ describe('FieldInspector', () => {
     });
 
     it('should validate PDF signature', async () => {
-      mockHttps.get.mockImplementation((url, options, callback) => {
+      mockHttps.get.mockImplementation((_url, options, callback) => {
         if (typeof options === 'function') {
           callback = options;
         }

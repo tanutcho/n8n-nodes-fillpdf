@@ -334,8 +334,8 @@ describe('FillPdf Error System', () => {
       const afterTime = new Date().toISOString();
 
       expect(error.errorContext.timestamp).toBeDefined();
-      expect(error.errorContext.timestamp!).toBeGreaterThanOrEqual(beforeTime);
-      expect(error.errorContext.timestamp!).toBeLessThanOrEqual(afterTime);
+      expect(new Date(error.errorContext.timestamp!).getTime()).toBeGreaterThanOrEqual(beforeTime);
+      expect(new Date(error.errorContext.timestamp!).getTime()).toBeLessThanOrEqual(afterTime);
     });
   });
 });
