@@ -59,7 +59,7 @@ describe('PdfProcessor', () => {
       mapping: [
         { pdfFieldName: 'firstName', valueSource: 'static', staticValue: 'John Doe' },
         { pdfFieldName: 'email', valueSource: 'expression', expression: '{{$json.email}}' },
-        { pdfFieldName: 'subscribe', valueSource: 'static', staticValue: true },
+        { pdfFieldName: 'subscribe', valueSource: 'static', staticValue: 'true' },
       ],
     },
     outputFormat: 'binary',
@@ -419,7 +419,7 @@ describe('PdfProcessor', () => {
     it('should handle null field mappings', async () => {
       mockFieldMapper.mapFieldsToValues.mockResolvedValue({});
 
-      const result = await pdfProcessor.processPdf();
+      await pdfProcessor.processPdf();
 
       expect(mockPythonBridge.executePythonScript).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -646,7 +646,7 @@ describe('PdfProcessor', () => {
       let processingStartTime: number;
       let processingEndTime: number;
 
-      mockPythonBridge.executePythonScript.mockImplementation(async (input) => {
+      mockPythonBridge.executePythonScript.mockImplementation(async (_input) => {
         processingStartTime = Date.now();
         await new Promise(resolve => setTimeout(resolve, 200)); // Simulate processing
         processingEndTime = Date.now();

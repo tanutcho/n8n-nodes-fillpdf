@@ -29,6 +29,11 @@ export interface IErrorContext {
 	nodeParameters?: Record<string, any>;
 	inputData?: any;
 	stackTrace?: string;
+	missingLibrary?: string;
+	timeout?: number;
+	pythonVersion?: string;
+	systemError?: Error;
+	resourceType?: string;
 }
 
 /**

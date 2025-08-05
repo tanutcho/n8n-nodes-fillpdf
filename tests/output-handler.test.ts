@@ -1,6 +1,6 @@
 import { OutputHandler } from '../nodes/FillPdf/output-handler';
-import { IExecuteFunctions, NodeOperationError, IBinaryData } from 'n8n-workflow';
-import { IFillPdfNodeParams, INodeOutputData } from '../nodes/FillPdf/types';
+import { IExecuteFunctions, NodeOperationError } from 'n8n-workflow';
+import { IFillPdfNodeParams } from '../nodes/FillPdf/types';
 import { writeFileSync, mkdirSync, statSync } from 'fs';
 import { dirname, resolve } from 'path';
 
@@ -702,14 +702,14 @@ describe('OutputHandler', () => {
 
       // Mock formatOutput to handle the invalid data
       jest.spyOn(outputHandler, 'formatOutput')
-        .mockImplementationOnce(async (data, params, metadata) => ({
+        .mockImplementationOnce(async (data, _params, metadata) => ({
           json: { success: true, fieldsProcessed: 1, metadata: { ...metadata } },
           binary: { pdf: { data, mimeType: 'application/pdf' } },
         } as any))
         .mockImplementationOnce(async () => {
           throw new Error('Invalid PDF data');
         })
-        .mockImplementationOnce(async (data, params, metadata) => ({
+        .mockImplementationOnce(async (data, _params, metadata) => ({
           json: { success: true, fieldsProcessed: 1, metadata: { ...metadata } },
           binary: { pdf: { data, mimeType: 'application/pdf' } },
         } as any));

@@ -37,7 +37,7 @@ describe('FillPdf Performance Tests', () => {
     mockFs.readFileSync = jest.fn().mockReturnValue(Buffer.from(SIMPLE_TEXT_FORM_PDF, 'base64'));
     mockFs.writeFileSync = jest.fn();
     mockFs.mkdirSync = jest.fn();
-    mockFs.statSync = jest.fn().mockReturnValue({ size: 1000 } as any);
+    jest.spyOn(mockFs, 'statSync').mockReturnValue({ size: 1000 } as any);
 
     jest.clearAllMocks();
   });

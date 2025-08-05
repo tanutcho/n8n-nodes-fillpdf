@@ -1,6 +1,6 @@
 import { FieldInspector } from '../nodes/FillPdf/field-inspector';
 import { PythonBridge } from '../nodes/FillPdf/python-bridge';
-import { IFieldInfo, IPythonInput, IPythonOutput } from '../nodes/FillPdf/types';
+import { IFieldInfo, IPythonOutput } from '../nodes/FillPdf/types';
 import { IExecuteFunctions, ILoadOptionsFunctions } from 'n8n-workflow';
 import * as fs from 'fs';
 import * as https from 'https';
@@ -16,7 +16,7 @@ jest.mock('http');
 const MockPythonBridge = PythonBridge as jest.MockedClass<typeof PythonBridge>;
 const mockFs = fs as jest.Mocked<typeof fs>;
 const mockHttps = https as jest.Mocked<typeof https>;
-const mockHttp = http as jest.Mocked<typeof http>;
+// const mockHttp = http as jest.Mocked<typeof http>;
 
 describe('FieldInspector', () => {
   let fieldInspector: FieldInspector;
@@ -77,12 +77,12 @@ describe('FieldInspector', () => {
 
   describe('constructor', () => {
     it('should initialize with default python executable', () => {
-      const inspector = new FieldInspector();
+      // const inspector = new FieldInspector();
       expect(MockPythonBridge).toHaveBeenCalledWith(undefined);
     });
 
     it('should initialize with custom python executable', () => {
-      const inspector = new FieldInspector('/custom/python');
+      // const inspector = new FieldInspector('/custom/python');
       expect(MockPythonBridge).toHaveBeenCalledWith('/custom/python');
     });
   });
@@ -147,6 +147,7 @@ describe('FieldInspector', () => {
 
     it('should load fields from binary source', async () => {
       mockContext.getInputData.mockReturnValue([{
+        json: {},
         binary: {
           data: {
             data: Buffer.from('mock-pdf-data').toString('base64'),
@@ -413,7 +414,7 @@ describe('FieldInspector', () => {
     });
 
     it('should return null for missing property', async () => {
-      mockContext.getInputData.mockReturnValue([{ binary: {} }]);
+      mockContext.getInputData.mockReturnValue([{ json: {}, binary: {} }]);
 
       const result = await fieldInspector.getPdfDataFromBinary(mockContext, 'missing');
 

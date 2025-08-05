@@ -1,7 +1,7 @@
 import { FillPdf } from '../../nodes/FillPdf/FillPdf.node';
 import { IExecuteFunctions } from 'n8n-workflow';
 import { CORRUPTED_PDF, SIMPLE_TEXT_FORM_PDF, SAMPLE_FIELD_MAPPINGS, SAMPLE_INPUT_DATA } from './sample-pdfs';
-import { FillPdfError, FillPdfConfigError, FillPdfRuntimeError, FillPdfPythonError } from '../../nodes/FillPdf/errors';
+import { FillPdfConfigError, FillPdfRuntimeError, FillPdfPythonError } from '../../nodes/FillPdf/errors';
 import * as fs from 'fs';
 
 // Mock file system operations
@@ -38,7 +38,7 @@ describe('FillPdf Error Scenario Integration Tests', () => {
     mockFs.readFileSync = jest.fn();
     mockFs.writeFileSync = jest.fn();
     mockFs.mkdirSync = jest.fn();
-    mockFs.statSync = jest.fn().mockReturnValue({ size: 1000 } as any);
+    jest.spyOn(mockFs, 'statSync').mockReturnValue({ size: 1000 } as any);
 
     jest.clearAllMocks();
   });
@@ -688,7 +688,7 @@ describe('FillPdf Error Scenario Integration Tests', () => {
       expect(result[0][2].json.success).toBe(true);
 
       // Check batch summary reflects mixed results
-      const batchSummary = result[0][0].json.metadata.batchSummary;
+      const batchSummary = (result[0][0].json.metadata as any).batchSummary;
       expect(batchSummary?.successfulItems).toBe(2);
       expect(batchSummary?.failedItems).toBe(1);
     });

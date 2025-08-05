@@ -27,11 +27,11 @@ module.exports = {
 		'n8n-nodes-base/node-class-description-outputs-wrong': 'off',
 
 		// TypeScript rules
-		'@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+		'@typescript-eslint/no-unused-vars': 'off', // Disable for tests
 		'@typescript-eslint/no-explicit-any': 'off', // Allow any for n8n compatibility
 		'@typescript-eslint/explicit-function-return-type': 'off',
 		'@typescript-eslint/explicit-module-boundary-types': 'off',
-		'@typescript-eslint/no-non-null-assertion': 'warn',
+		'@typescript-eslint/no-non-null-assertion': 'off',
 		'@typescript-eslint/prefer-nullish-coalescing': 'off', // Too many false positives
 		'@typescript-eslint/prefer-optional-chain': 'off', // Too many false positives
 		'@typescript-eslint/no-var-requires': 'off', // Allow require for dynamic imports

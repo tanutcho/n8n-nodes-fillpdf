@@ -10,6 +10,15 @@ jest.mock('axios');
 const mockReadFileSync = readFileSync as jest.MockedFunction<typeof readFileSync>;
 const mockAxios = axios as jest.Mocked<typeof axios>;
 
+// Helper function to create mock axios response
+const createMockAxiosResponse = (data: any, status = 200, statusText = 'OK') => ({
+  data,
+  status,
+  statusText,
+  headers: {},
+  config: {},
+} as any);
+
 describe('PdfInputHandler', () => {
   let pdfInputHandler: PdfInputHandler;
   let mockContext: jest.Mocked<IExecuteFunctions>;
@@ -170,10 +179,7 @@ describe('PdfInputHandler', () => {
 
     it('should download PDF from URL successfully', async () => {
       const mockPdfBuffer = Buffer.from('%PDF-1.4 mock pdf content');
-      mockAxios.get.mockResolvedValue({
-        status: 200,
-        data: mockPdfBuffer.buffer,
-      });
+      mockAxios.get.mockResolvedValue(createMockAxiosResponse(mockPdfBuffer.buffer));
 
       const result = await (pdfInputHandler as any).getPdfFromUrl();
 
@@ -214,10 +220,7 @@ describe('PdfInputHandler', () => {
         .mockReturnValueOnce('url')
         .mockReturnValueOnce('https://example.com/notfound.pdf');
 
-      mockAxios.get.mockResolvedValue({
-        status: 404,
-        statusText: 'Not Found',
-      });
+      mockAxios.get.mockResolvedValue(createMockAxiosResponse(null, 404, 'Not Found'));
 
       await expect((pdfInputHandler as any).getPdfFromUrl())
         .rejects.toThrow('HTTP 404: Not Found');
@@ -257,10 +260,7 @@ describe('PdfInputHandler', () => {
         .mockReturnValueOnce('https://example.com/test.pdf');
 
       // Test invalid PDF content
-      mockAxios.get.mockResolvedValue({
-        status: 200,
-        data: Buffer.from('not a pdf').buffer,
-      });
+      mockAxios.get.mockResolvedValue(createMockAxiosResponse(Buffer.from('not a pdf').buffer));
 
       await expect((pdfInputHandler as any).getPdfFromUrl())
         .rejects.toThrow('does not appear to be a valid PDF');
@@ -280,6 +280,7 @@ describe('PdfInputHandler', () => {
         .mockReturnValueOnce('data'); // binaryPropertyName
       
       mockContext.getInputData.mockReturnValue([{
+        json: {},
         binary: { data: mockBinaryData },
       }]);
     });
@@ -302,7 +303,7 @@ describe('PdfInputHandler', () => {
     });
 
     it('should throw error when binary data is not found', async () => {
-      mockContext.getInputData.mockReturnValue([{ binary: {} }]);
+      mockContext.getInputData.mockReturnValue([{ json: {}, binary: {} }]);
 
       await expect((pdfInputHandler as any).getPdfFromBinary())
         .rejects.toThrow("No binary data found for property 'data'");
@@ -310,6 +311,7 @@ describe('PdfInputHandler', () => {
 
     it('should throw error when binary data has no data property', async () => {
       mockContext.getInputData.mockReturnValue([{
+        json: {},
         binary: { 
           data: { mimeType: 'application/pdf' } as any 
         },
@@ -323,6 +325,7 @@ describe('PdfInputHandler', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
       
       mockContext.getInputData.mockReturnValue([{
+        json: {},
         binary: { 
           data: {
             ...mockBinaryData,
@@ -344,6 +347,7 @@ describe('PdfInputHandler', () => {
     it('should validate binary PDF content', async () => {
       // Test invalid PDF content
       mockContext.getInputData.mockReturnValue([{
+        json: {},
         binary: { 
           data: {
             data: Buffer.from('not a pdf').toString('base64'),
@@ -381,10 +385,7 @@ describe('PdfInputHandler', () => {
         .mockReturnValueOnce('https://example.com/report.pdf'); // pdfUrl
       
       const mockPdfBuffer = Buffer.from('%PDF-1.4 mock pdf');
-      mockAxios.get.mockResolvedValue({
-        status: 200,
-        data: mockPdfBuffer.buffer,
-      });
+      mockAxios.get.mockResolvedValue(createMockAxiosResponse(mockPdfBuffer.buffer));
 
       const metadata = await pdfInputHandler.getPdfMetadata();
 
@@ -407,6 +408,7 @@ describe('PdfInputHandler', () => {
         .mockReturnValueOnce('pdfData'); // binaryPropertyName
       
       mockContext.getInputData.mockReturnValue([{
+        json: {},
         binary: { pdfData: mockBinaryData },
       }]);
 
@@ -445,6 +447,7 @@ describe('PdfInputHandler', () => {
         .mockReturnValueOnce('document');
       
       mockContext.getInputData.mockReturnValue([{
+        json: {},
         binary: { document: mockBinaryData },
       }]);
 
@@ -621,7 +624,8 @@ describe('PdfInputHandler', () => {
 
       // Test with null binary data
       mockContext.getInputData.mockReturnValue([{
-        binary: { data: null },
+        json: {},
+        binary: { data: undefined as any },
       }]);
 
       await expect((pdfInputHandler as any).getPdfFromBinary())

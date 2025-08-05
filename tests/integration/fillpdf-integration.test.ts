@@ -1,5 +1,5 @@
 import { FillPdf } from '../../nodes/FillPdf/FillPdf.node';
-import { IExecuteFunctions, INodeExecutionData, ILoadOptionsFunctions } from 'n8n-workflow';
+import { IExecuteFunctions, ILoadOptionsFunctions } from 'n8n-workflow';
 import {
   SIMPLE_TEXT_FORM_PDF,
   CHECKBOX_RADIO_FORM_PDF,
@@ -9,7 +9,7 @@ import {
   SAMPLE_PDF_FIELDS,
   SAMPLE_FIELD_MAPPINGS,
   SAMPLE_INPUT_DATA,
-  EXPECTED_OUTPUTS,
+
 } from './sample-pdfs';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -56,7 +56,7 @@ describe('FillPdf Integration Tests', () => {
     mockFs.readFileSync = jest.fn();
     mockFs.writeFileSync = jest.fn();
     mockFs.mkdirSync = jest.fn();
-    mockFs.statSync = jest.fn().mockReturnValue({ size: 1000 } as any);
+    (mockFs as any).statSync = jest.fn().mockReturnValue({ size: 1000 } as any);
     
     mockPath.resolve = jest.fn().mockImplementation((p) => `/resolved${p}`);
     mockPath.dirname = jest.fn().mockImplementation((p) => p.substring(0, p.lastIndexOf('/')));
@@ -222,11 +222,12 @@ describe('FillPdf Integration Tests', () => {
       result[0].forEach((outputData, index) => {
         expect(outputData.json.success).toBe(true);
         expect(outputData.json.fieldsProcessed).toBe(2);
-        expect(outputData.json.metadata.batch?.itemIndex).toBe(index + 1);
-        expect(outputData.json.metadata.batch?.totalItems).toBe(3);
-        expect(outputData.json.metadata.batchSummary?.totalItems).toBe(3);
-        expect(outputData.json.metadata.batchSummary?.successfulItems).toBe(3);
-        expect(outputData.json.metadata.batchSummary?.failedItems).toBe(0);
+        const metadata = outputData.json.metadata as any;
+        expect(metadata.batch?.itemIndex).toBe(index + 1);
+        expect(metadata.batch?.totalItems).toBe(3);
+        expect(metadata.batchSummary?.totalItems).toBe(3);
+        expect(metadata.batchSummary?.successfulItems).toBe(3);
+        expect(metadata.batchSummary?.failedItems).toBe(0);
       });
 
       // Verify files were written for each batch item
@@ -477,8 +478,9 @@ describe('FillPdf Integration Tests', () => {
       // Verify all items processed successfully
       result[0].forEach((outputData, index) => {
         expect(outputData.json.success).toBe(true);
-        expect(outputData.json.metadata.batch?.itemIndex).toBe(index + 1);
-        expect(outputData.json.metadata.batch?.totalItems).toBe(10);
+        const metadata = outputData.json.metadata as any;
+        expect(metadata.batch?.itemIndex).toBe(index + 1);
+        expect(metadata.batch?.totalItems).toBe(10);
       });
     });
   });

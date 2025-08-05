@@ -355,6 +355,10 @@ npm run lint         # Check linting
 npm run lint:fix     # Fix linting issues
 npm run format       # Format code
 
+# Security
+npm run audit        # Security audit
+npm run audit:fix    # Fix vulnerabilities
+
 # Release
 npm run prepare      # Pre-commit hooks
 npm run release      # Create release
@@ -502,6 +506,38 @@ We follow [Semantic Versioning](https://semver.org/):
 - [TypeScript Documentation](https://www.typescriptlang.org/docs/)
 - [Jest Testing Framework](https://jestjs.io/docs/getting-started)
 - [fillpdf Python Library](https://pypi.org/project/fillpdf/)
+
+## Security
+
+### Security Best Practices
+
+- **Dependency Management**: Regularly update dependencies and run security audits
+- **Input Validation**: Always validate and sanitize user inputs
+- **Error Handling**: Don't expose sensitive information in error messages
+- **File Operations**: Use secure file handling practices
+- **Python Execution**: Validate Python script inputs and limit execution time
+
+### Security Auditing
+
+```bash
+# Run security audit before committing
+npm run audit
+
+# Fix vulnerabilities automatically
+npm run audit:fix
+
+# Check for outdated packages
+npm outdated
+```
+
+### Reporting Security Issues
+
+If you discover a security vulnerability:
+
+1. **Do not** create a public GitHub issue
+2. **Email** the maintainers directly
+3. **Provide** detailed information about the vulnerability
+4. **Wait** for confirmation before public disclosure
 
 ## Recognition
 
