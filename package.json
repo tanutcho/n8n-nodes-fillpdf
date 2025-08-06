@@ -39,7 +39,6 @@
     "node": ">=16.0.0",
     "npm": ">=7.0.0"
   },
-  "main": "index.js",
   "scripts": {
     "build": "tsc && gulp build:icons",
     "build:clean": "rimraf dist && npm run build",
