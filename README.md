@@ -231,18 +231,33 @@ Create a simple test workflow to verify everything works:
 
 ## 🎯 Usage Guide
 
+### New: Automatic Field Extraction ✨
+
+The Fill PDF node now automatically detects fillable fields in your PDF and presents them as input fields in the n8n interface. This eliminates manual field mapping and provides an intuitive form-filling experience.
+
+**Key Features**:
+- **Real-time field extraction** for URL sources
+- **Runtime field extraction** for upload/binary sources  
+- **Dynamic interface generation** with appropriate input controls
+- **Automatic field type detection** (text, checkbox, dropdown, radio)
+- **Field validation and requirements** checking
+- **Fallback to manual mapping** when extraction fails
+
+For detailed information, see the [Field Extraction Guide](FIELD-EXTRACTION-GUIDE.md).
+
 ### Basic Workflow Setup
 
 1. **Add the Fill PDF node** to your workflow from the node palette
 2. **Configure the PDF source**:
-   - **Upload**: Upload a PDF file directly
-   - **URL**: Provide a URL to a PDF file
-   - **Binary**: Use PDF data from previous nodes
+   - **Upload**: Upload a PDF file directly (fields extracted at runtime)
+   - **URL**: Provide a URL to a PDF file (fields extracted immediately)
+   - **Binary**: Use PDF data from previous nodes (fields extracted at runtime)
 
-3. **Set up field mappings**:
-   - The node will automatically detect form fields in your PDF
-   - Map each field to static values or dynamic expressions
+3. **Fill the extracted fields**:
+   - **URL sources**: Fields appear automatically in the interface
+   - **Upload/Binary sources**: Use manual field mapping or check execution logs for field names
    - Use n8n expressions like `{{ $json.customerName }}` for dynamic data
+   - Static values are also supported
 
 4. **Choose output format**:
    - **Binary**: Return PDF as binary data for further processing
@@ -581,10 +596,43 @@ Use different PDF templates based on conditions:
 
 For more detailed examples, see [EXAMPLES.md](EXAMPLES.md).
 
-### Field Mapping Guide
+### Field Configuration Guide
 
-#### Static Values
-Use static values for fields that don't change:
+#### Automatic Field Detection (Recommended)
+
+For **URL sources**, fields are automatically detected and presented in the interface:
+```javascript
+// Fields appear automatically - just fill the values
+{
+  "customer_name": "{{ $json.firstName }} {{ $json.lastName }}",
+  "email_address": "{{ $json.email }}",
+  "terms_accepted": "{{ $json.agreedToTerms }}"  // boolean for checkboxes
+}
+```
+
+For **Upload/Binary sources**, use manual mapping (fields are logged during execution):
+```javascript
+{
+  "fieldMappings": {
+    "mapping": [
+      {
+        "pdfFieldName": "customer_name",
+        "valueSource": "expression",
+        "expression": "{{ $json.firstName }} {{ $json.lastName }}"
+      },
+      {
+        "pdfFieldName": "email_address", 
+        "valueSource": "expression",
+        "expression": "{{ $json.email }}"
+      }
+    ]
+  }
+}
+```
+
+#### Manual Field Mapping (Fallback)
+
+When automatic extraction fails, use manual mapping:
 ```javascript
 {
   "pdfFieldName": "company_name",
@@ -593,24 +641,16 @@ Use static values for fields that don't change:
 }
 ```
 
-#### Dynamic Expressions
-Use n8n expressions for dynamic data:
-```javascript
-{
-  "pdfFieldName": "customer_email",
-  "valueSource": "expression", 
-  "expression": "{{ $json.email }}"
-}
-```
-
 #### Field Types Support
 
-| PDF Field Type | Supported Values | Example |
-|----------------|------------------|---------|
-| Text | String values | `"John Doe"` |
-| Checkbox | Boolean values | `true`, `false` |
-| Radio Button | String (option name) | `"option1"` |
-| Dropdown | String (option value) | `"value1"` |
+| PDF Field Type | Interface Control | Example Value |
+|----------------|-------------------|---------------|
+| Text | Text input | `"John Doe"` |
+| Checkbox | Boolean toggle | `true`, `false` |
+| Radio Button | Single-select dropdown | `"option1"` |
+| Dropdown | Dropdown with PDF options | `"value1"` |
+
+**📖 For comprehensive field extraction documentation, see [FIELD-EXTRACTION-GUIDE.md](FIELD-EXTRACTION-GUIDE.md)**
 
 ## 🔧 Configuration Options
 
@@ -914,15 +954,19 @@ npm run lint
 
 ## 📄 Features
 
+- ✨ **Automatic Field Extraction**: Detects PDF form fields and creates dynamic interface
+- ✨ **Real-time Field Detection**: Immediate field extraction for URL sources
+- ✨ **Smart Field Types**: Automatic detection of text, checkbox, dropdown, and radio fields
 - ✅ **Multiple PDF Sources**: Upload, URL, or binary data input
-- ✅ **Field Type Support**: Text, checkbox, radio buttons, dropdowns
-- ✅ **Dynamic Mapping**: Use n8n expressions for dynamic field values
+- ✅ **Dynamic Interface**: Generated input controls based on PDF structure
+- ✅ **Expression Support**: Use n8n expressions for dynamic field values
+- ✅ **Field Validation**: Automatic validation of field types and requirements
 - ✅ **Batch Processing**: Handle multiple PDFs in single workflow
 - ✅ **Flexible Output**: Binary data, file save, or both
-- ✅ **Error Handling**: Comprehensive error reporting and recovery
-- ✅ **Validation**: Field existence and type validation
+- ✅ **Error Handling**: Comprehensive error reporting and graceful fallbacks
+- ✅ **Performance Caching**: Intelligent caching for URL-based field extraction
+- ✅ **Backward Compatibility**: Existing workflows continue to work unchanged
 - ✅ **Security**: Safe Python execution and file handling
-- ✅ **Performance**: Optimized for large files and batch operations
 
 ## Development
 

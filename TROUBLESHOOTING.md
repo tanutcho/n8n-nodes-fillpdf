@@ -269,6 +269,78 @@ NodeOperationError: PDF processing failed
 
 ## PDF Processing Issues
 
+### Issue: "Field extraction failed"
+
+**Error Message:**
+```
+Error: Failed to extract fields from PDF
+```
+
+**Possible Causes:**
+- Network connectivity issues (URL sources)
+- PDF access permissions
+- Corrupted PDF file
+- PDF extraction timeout
+
+**Solutions:**
+
+**For URL Sources:**
+1. **Check URL accessibility**:
+   ```bash
+   curl -I https://your-pdf-url.com/file.pdf
+   ```
+
+2. **Verify PDF validity**:
+   - Open URL in browser to test access
+   - Check for authentication requirements
+   - Ensure PDF is not password protected
+
+3. **Enable manual field mapping**:
+   - Toggle "Use Manual Field Mapping" option
+   - Configure fields manually as fallback
+
+**For Upload/Binary Sources:**
+1. **Check PDF file integrity**:
+   - Open PDF in a PDF viewer
+   - Verify file is not corrupted
+   - Ensure PDF has fillable form fields
+
+2. **Review execution logs**:
+   - Check workflow execution logs for extracted field information
+   - Fields are displayed during runtime execution
+   - Use logged field names for manual mapping
+
+### Issue: "Field extraction timeout"
+
+**Error Message:**
+```
+Field extraction timed out after 30 seconds
+```
+
+**Symptoms:**
+- Loading indicator stuck on "Extracting fields..."
+- Node interface doesn't update with fields
+
+**Solutions:**
+
+1. **Check PDF file size**:
+   ```bash
+   # Keep PDF files under 50MB for optimal performance
+   ls -lh your-pdf-file.pdf
+   ```
+
+2. **Verify network speed** (URL sources):
+   - Test download speed of PDF URL
+   - Use local/cached PDF if possible
+
+3. **Clear cache and retry**:
+   - Restart n8n to clear field extraction cache
+   - Try refreshing the node configuration
+
+4. **Use manual field mapping**:
+   - Enable manual mode as fallback
+   - Configure fields manually while extraction issues are resolved
+
 ### Issue: "PDF has no fillable fields"
 
 **Error Message:**
@@ -308,19 +380,31 @@ Error: Field 'fieldName' not found in PDF
 
 **Solutions:**
 
-1. **Inspect PDF fields**:
+**For URL Sources (with automatic field extraction):**
+1. **Use dynamic field inputs**:
+   - Fields should appear automatically in the interface
+   - Use the generated input controls instead of manual mapping
+   - If fields don't appear, check for extraction errors
+
+**For Upload/Binary Sources:**
+1. **Check execution logs**:
+   - Review workflow execution logs for extracted field names
+   - Fields are logged during runtime: "PDF fields extracted: field1, field2..."
+   - Use exact field names from logs
+
+2. **Inspect PDF fields manually**:
    ```python
    import fillpdf
    fields = fillpdf.get_form_fields('your-pdf.pdf')
    print(fields)
    ```
 
-2. **Check field names exactly**:
+3. **Check field names exactly**:
    - Field names are case-sensitive
    - Check for extra spaces or special characters
    - Use the exact field name from PDF
 
-3. **Enable field validation**:
+4. **Enable field validation**:
    ```javascript
    {
      "options": {
@@ -328,6 +412,33 @@ Error: Field 'fieldName' not found in PDF
        "skipMissingFields": false
      }
    }
+   ```
+
+### Issue: "Field extraction cache issues"
+
+**Symptoms:**
+- Stale field data for URL sources
+- Fields don't update when PDF changes
+- Incorrect field types displayed
+
+**Solutions:**
+
+1. **Clear field extraction cache**:
+   ```bash
+   # Restart n8n to clear all caches
+   pkill -f n8n
+   n8n start
+   ```
+
+2. **Force cache refresh**:
+   - Modify PDF URL slightly (add ?v=1 parameter)
+   - Change PDF source and change back
+   - Wait for cache TTL (5 minutes for URL sources)
+
+3. **Check cache debug info**:
+   ```bash
+   export DEBUG=n8n-nodes-fillpdf:field-cache
+   n8n start
    ```
 
 ### Issue: "PDF output is corrupted"

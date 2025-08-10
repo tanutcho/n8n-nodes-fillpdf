@@ -110,6 +110,33 @@ export interface INodeOutputData {
 				missingFieldsSkipped?: boolean;
 			};
 
+			// Field extraction metadata
+			fieldExtraction?: {
+				extractedFieldCount?: number;
+				extractionPerformed?: boolean;
+				pdfSource?: string;
+				fieldTypes?: Record<string, number>;
+				requiredFields?: number;
+				optionalFields?: number;
+				extractedFields?: Array<{
+					name: string;
+					type: string;
+					required: boolean;
+					hasOptions: boolean;
+					optionCount: number;
+					maxLength?: number;
+					defaultValue?: string;
+				}>;
+				summary?: {
+					totalFields: number;
+					requiredFields: number;
+					optionalFields: number;
+					fieldTypes: Record<string, number>;
+					extractionSource: string;
+					extractionTimestamp: string;
+				};
+			};
+
 			processing?: {
 				startTime?: string;
 				endTime?: string;

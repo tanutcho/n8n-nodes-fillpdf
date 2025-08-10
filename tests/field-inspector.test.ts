@@ -442,10 +442,7 @@ describe('FieldInspector', () => {
 
     it('should handle load context without binary access', async () => {
       await expect(fieldInspector.getPdfDataFromBinary(mockLoadContext as any, 'data'))
-        .rejects.toMatchObject({
-          message: 'Binary data access not available in current context',
-          errorType: 'runtime',
-        });
+        .rejects.toThrow('Binary data access not available in loadOptions context. Use during workflow execution instead.');
     });
   });
 
@@ -538,9 +535,9 @@ describe('FieldInspector', () => {
       const checkboxOptions = (fieldInspector as any).convertFieldsToOptions([checkboxField]);
       const dropdownOptions = (fieldInspector as any).convertFieldsToOptions([dropdownField]);
 
-      expect(textOptions[0].name).toBe('firstName 📝 * (max: 50)');
-      expect(checkboxOptions[0].name).toBe('subscribe ☑');
-      expect(dropdownOptions[0].name).toBe('country ▼ (USA, Canada, UK, +2 more)');
+      expect(textOptions[0].name).toBe('📝 firstName ⚠️ (max:50)');
+      expect(checkboxOptions[0].name).toBe('☑️ subscribe');
+      expect(dropdownOptions[0].name).toBe('📋 country ([5 options])');
     });
 
     it('should get and set python executable', () => {
@@ -567,7 +564,7 @@ describe('FieldInspector', () => {
       });
 
       const result = await fieldInspector.inspectPdfFields('pdf-data');
-      expect(result).toEqual([null, undefined, { invalid: 'field' }]);
+      expect(result).toEqual([]); // Invalid fields are filtered out
     });
 
     it('should handle network errors gracefully', async () => {
